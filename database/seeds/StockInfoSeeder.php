@@ -20,7 +20,6 @@ class StockInfoSeeder extends Seeder
                 'warehouse_id' => $faker->numberBetween(1,10),
                 'quantity' => $faker->randomDigit,
                 'process_type' => $faker->numberBetween(1,2),
-                'created_at' => $faker->dateTime($max = 'now', $timezone = null)
             ]);
         }
     }
