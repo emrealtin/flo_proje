@@ -9,6 +9,8 @@ class StockInfo extends Model
     protected $table = 'stock_info';
     protected $fillable = [
         'barcode',
-        'warehouse_id'
+        'warehouse_id',
+        'quantity',
+        'process_type'
     ];
 }
