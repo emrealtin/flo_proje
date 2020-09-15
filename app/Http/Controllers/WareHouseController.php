@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\StockInfo;
 use App\WareHouse;
+use Illuminate\Support\Facades\DB;
 
 class WareHouseController extends Controller
 {
-
     public $warehouse_priority; // Depo önceliği
     public $warehouse_id; // Seçili Depo ID
     public $order_stock_status; // Siparişin depoda karşılama durumu
@@ -21,18 +21,25 @@ class WareHouseController extends Controller
 
             // Depo ID belirtilmemişse tüm depoların toplam stoklarını verir
 
-            $stock_info = StockInfo::groupBy('warehouse_id')
+            /*$stock_info = StockInfo::groupBy('warehouse_id')
                 ->selectRaw('warehouse_id, sum(quantity) as stock')
                 //->where('process_type',1)
-                ->get();
+                ->get();*/
 
         }else{
 
             // Depo ID belirtilmişse depoya ait toplam stoğu verir
 
-            $stock_info = StockInfo::selectRaw('sum(quantity) as stock')
-                ->where('warehouse_id',$request->id)
-                ->get();
+            $input_stock_info = StockInfo::where('warehouse_id',$request->id)
+                ->where('process_type',1)
+                ->sum('quantity');
+
+
+            $output_stock_info = StockInfo::where('warehouse_id',$request->id)
+                ->where('process_type',2)
+                ->sum('quantity');
+
+            $stock_info = ($input_stock_info-$output_stock_info);
         }
 
         return $stock_info;
@@ -79,34 +86,47 @@ class WareHouseController extends Controller
 
         $this->warehouse_id = $this->setWarehouse($this->warehouse_priority); // İlk öncelikteki Depo ID alınacak
 
-        for($i = 1; $i < $this->TotalWarehouse(); $i++) { // Toplam depo sayısı kadar öncelik kontrolü yapılacak
+        for($i = 1; $i <= $this->TotalWarehouse(); $i++) { // Toplam depo sayısı kadar öncelik kontrolü yapılacak
 
-            if($this->WareHouseStockControl($this->warehouse_id,$data) !== true){
+            if ($this->getWarehouseOrderLimit($this->warehouse_id) > 0){
 
-                // Tüm stoklar önceliği belirlenen depodan karşılanamıyorsa yeni öncelik tanımlanır
+                if ($this->WareHouseStockControl($this->warehouse_id, $data) !== true) {
 
-                if($this->warehouse_priority< $this->TotalWarehouse()) { // Tüm öncelikler denenmediyse bir sonraki önceliğe geçilecek
+                    // Tüm stoklar önceliği belirlenen depodan karşılanamıyorsa yeni öncelik tanımlanır
 
-                    $this->warehouse_priority = $this->warehouse_priority + 1;
+                    if ($this->warehouse_priority < $this->TotalWarehouse()) { // Tüm öncelikler denenmediyse bir sonraki önceliğe geçilecek
 
-                    $this->warehouse_id = $this->setWarehouse($this->warehouse_priority); // Yeni öncelik sayısına göre Depo ID getirilecek
+                        $this->warehouse_priority = $this->warehouse_priority + 1;
 
-                    $this->order_stock_status = false;
+                        $this->warehouse_id = $this->setWarehouse($this->warehouse_priority); // Yeni öncelik sayısına göre Depo ID getirilecek
 
-                }else{ // Kontrol edilecek öncelik kalmadıysa sipariş tamamlanamayacak
+                        $this->order_stock_status = false;
 
-                    $this->order_stock_status = false;
+                    } else { // Kontrol edilecek öncelik kalmadıysa sipariş tamamlanamayacak
 
+                        $this->order_stock_status = false;
+                    }
+
+                } else {
+
+                    $this->order_stock_status = true;
                 }
+
             }else{
 
-                $this->order_stock_status = true;
+                $this->warehouse_priority = $this->warehouse_priority + 1;
+
+                $this->warehouse_id = $this->setWarehouse($this->warehouse_priority); // Yeni öncelik sayısına göre Depo ID getirilecek
+
+                $this->order_stock_status = false;
+
             }
         }
 
-        //Depo bilgisi dönecek
-
-        return $this->order_stock_status;
+        return response()->json([
+            'status' => $this->order_stock_status,
+            'warehouse_id' =>  $this->warehouse_id,
+        ]);
 
     }
 
@@ -135,5 +155,13 @@ class WareHouseController extends Controller
         $warehouse = WareHouse::get();
 
         return $warehouse->count();
+    }
+
+    public function getWarehouseOrderLimit($warehouse_id){
+
+        $warehouse_limit = WareHouse::select('daily_order_limit')->where('id',$warehouse_id)->first();
+
+        return $warehouse_limit->daily_order_limit;
+
     }
 }
