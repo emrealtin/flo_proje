@@ -2,25 +2,49 @@
 
 use Faker\Factory as Faker;
 use App\StockInfo;
+use App\Products;
 use Illuminate\Database\Seeder;
 
 class StockInfoSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
+
     public function run()
     {
         $faker = Faker::create();
-        foreach (range(1,10) as $index) {
+
+        $products1 = Products::where('status', 1)->offset(0)->limit(20)->get();
+        $products2 = Products::where('status', 1)->offset(0)->limit(20)->get();
+        $products3 = Products::where('status', 1)->offset(20)->limit(20)->get();
+
+        foreach ($products1 as $product) {
+
             StockInfo::insert([
-                'barcode' => $faker->ean13,
+                'barcode' => $product->barcode,
                 'warehouse_id' => $faker->numberBetween(1,10),
                 'quantity' => $faker->randomDigit,
                 'process_type' => $faker->numberBetween(1,2),
             ]);
         }
+
+        foreach ($products2 as $product) {
+
+            StockInfo::insert([
+                'barcode' => $product->barcode,
+                'warehouse_id' => $faker->numberBetween(1,10),
+                'quantity' => $faker->randomDigit,
+                'process_type' => $faker->numberBetween(1,2),
+            ]);
+        }
+
+        foreach ($products3 as $product) {
+
+            StockInfo::insert([
+                'barcode' => $product->barcode,
+                'warehouse_id' => $faker->numberBetween(1,10),
+                'quantity' => $faker->randomDigit,
+                'process_type' => $faker->numberBetween(1,2),
+            ]);
+        }
+
     }
 }

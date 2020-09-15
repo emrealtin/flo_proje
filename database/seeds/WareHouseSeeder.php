@@ -6,7 +6,8 @@ use Illuminate\Database\Seeder;
 
 class WareHouseSeeder extends Seeder
 {
-   public $priority = 0;
+    public $priority = 0;
+
     public function run()
     {
         $faker = Faker::create();
