@@ -17,10 +17,10 @@ class CreateOrderProductTable extends Migration
 
             Schema::create('order_product', function (Blueprint $table) {
                 $table->id();
-                $table->integer('order_id');
-                $table->string('barcode');
-                $table->integer('quantity');
-                $table->integer('warehouse_id');
+                $table->integer('order_id')->default(0);
+                $table->string('barcode')->default(0);
+                $table->integer('quantity')->default(0);
+                $table->integer('warehouse_id')->default(0);
                 $table->timestamps();
             });
         }

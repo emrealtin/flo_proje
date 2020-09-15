@@ -17,10 +17,10 @@ class CreateStockInfoTable extends Migration
 
             Schema::create('stock_info', function (Blueprint $table) {
                 $table->id();
-                $table->string('barcode');
-                $table->integer('warehouse_id');
-                $table->integer('quantity');
-                $table->smallInteger('process_type');
+                $table->string('barcode')->default(0);
+                $table->integer('warehouse_id')->default(0);
+                $table->integer('quantity')->default(0);
+                $table->smallInteger('process_type')->default(0);
                 $table->timestamps();
             });
         }
