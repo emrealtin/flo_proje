@@ -21,7 +21,7 @@ class StockInfoSeeder extends Seeder
             StockInfo::insert([
                 'barcode' => $product->barcode,
                 'warehouse_id' => $faker->numberBetween(1,10),
-                'quantity' => $faker->randomDigit,
+                'quantity' => $faker->numberBetween(1,10),
                 'process_type' => $faker->numberBetween(1,2),
             ]);
         }
@@ -31,7 +31,7 @@ class StockInfoSeeder extends Seeder
             StockInfo::insert([
                 'barcode' => $product->barcode,
                 'warehouse_id' => $faker->numberBetween(1,10),
-                'quantity' => $faker->randomDigit,
+                'quantity' => $faker->numberBetween(1,15),
                 'process_type' => $faker->numberBetween(1,2),
             ]);
         }
@@ -41,7 +41,7 @@ class StockInfoSeeder extends Seeder
             StockInfo::insert([
                 'barcode' => $product->barcode,
                 'warehouse_id' => $faker->numberBetween(1,10),
-                'quantity' => $faker->randomDigit,
+                'quantity' => $faker->numberBetween(1,10),
                 'process_type' => $faker->numberBetween(1,2),
             ]);
         }
