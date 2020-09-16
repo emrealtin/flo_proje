@@ -20,9 +20,9 @@ class StockInfoSeeder extends Seeder
 
             StockInfo::insert([
                 'barcode' => $product->barcode,
-                'warehouse_id' => $faker->numberBetween(1,10),
+                'warehouse_id' => 2,
                 'quantity' => $faker->numberBetween(1,10),
-                'process_type' => $faker->numberBetween(1,2),
+                'process_type' => 1,
             ]);
         }
 
@@ -30,9 +30,9 @@ class StockInfoSeeder extends Seeder
 
             StockInfo::insert([
                 'barcode' => $product->barcode,
-                'warehouse_id' => $faker->numberBetween(1,10),
+                'warehouse_id' => 2,
                 'quantity' => $faker->numberBetween(1,15),
-                'process_type' => $faker->numberBetween(1,2),
+                'process_type' => 1,
             ]);
         }
 

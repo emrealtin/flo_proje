@@ -22,7 +22,6 @@ class OrderController extends Controller
 
         $stock_control = $warehouse->OrderStockControl($request->details);
 
-
         $this->total_quantity = 0;
 
         if($stock_control->getOriginalContent()['status'] == true){
