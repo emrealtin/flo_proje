@@ -21,10 +21,8 @@ class WareHouseController extends Controller
 
             // Depo ID belirtilmemişse tüm depoların toplam stoklarını verir
 
-            /*$stock_info = StockInfo::groupBy('warehouse_id')
-                ->selectRaw('warehouse_id, sum(quantity) as stock')
-                //->where('process_type',1)
-                ->get();*/
+            $stock_info = DB::select(' SELECT warehouse_id, ((select sum(quantity) as G from stock_info where process_type = 1 and warehouse_id = S.warehouse_id) - (select sum(quantity) as G from stock_info where process_type = 2 and warehouse_id = S.warehouse_id)) as STOK FROM stock_info as S GROUP BY warehouse_id');
+
 
         }else{
 
