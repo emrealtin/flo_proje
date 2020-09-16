@@ -16,26 +16,24 @@ class WareHouseController extends Controller
     public $warehouse_limit_status; // Depo limit durumu
     public $warehouse_status; // Depo limit durumu
 
-    public function getWareHouseStock(Request $request)
-    {
+    public function getWareHouseStockCalc($id = 0){
 
-        if(!$request->id){
+        if($id == 0){
 
             // Depo ID belirtilmemişse tüm depoların toplam stoklarını verir
 
-            $stock_info = DB::select(' SELECT warehouse_id, ((select sum(quantity) as G from stock_info where process_type = 1 and warehouse_id = S.warehouse_id) - (select sum(quantity) as G from stock_info where process_type = 2 and warehouse_id = S.warehouse_id)) as STOK FROM stock_info as S GROUP BY warehouse_id');
-
+            $stock_info = DB::select(' SELECT warehouse_id, ((select sum(quantity) as G from stock_info where process_type = 1 and warehouse_id = S.warehouse_id) - (select sum(quantity) as G from stock_info where process_type = 2 and warehouse_id = S.warehouse_id)) as stock FROM stock_info as S GROUP BY warehouse_id');
 
         }else{
 
             // Depo ID belirtilmişse depoya ait toplam stoğu verir
 
-            $input_stock_info = StockInfo::where('warehouse_id',$request->id)
+            $input_stock_info = StockInfo::where('warehouse_id',$id)
                 ->where('process_type',1)
                 ->sum('quantity');
 
 
-            $output_stock_info = StockInfo::where('warehouse_id',$request->id)
+            $output_stock_info = StockInfo::where('warehouse_id',$id)
                 ->where('process_type',2)
                 ->sum('quantity');
 
@@ -43,6 +41,13 @@ class WareHouseController extends Controller
         }
 
         return $stock_info;
+
+    }
+
+    public function getWareHouseStock(Request $request)
+    {
+
+        return $this->getWareHouseStockCalc($request->id);
 
     }
 
