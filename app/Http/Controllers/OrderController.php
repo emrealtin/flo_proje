@@ -22,13 +22,16 @@ class OrderController extends Controller
 
         $stock_control = $warehouse->OrderStockControl($request->details);
 
+
         $this->total_quantity = 0;
 
         if($stock_control->getOriginalContent()['status'] == true){
 
             $faker = Faker::create();
 
+            $order['code'] = $stock_control->getOriginalContent()['code'];
             $order['status'] = "success";
+            $order['content'] = $stock_control->getOriginalContent()['content'];
             $order['order_id'] = $faker->numberBetween(111111,999999);
             $order['order_date'] = Carbon::today()->format('Y-m-d H:i:s');
             $order['warehouse_id'] = $stock_control->getOriginalContent()['warehouse_id'];
@@ -86,8 +89,9 @@ class OrderController extends Controller
 
         }else{
 
+            $order['code'] = $stock_control->getOriginalContent()['code'];
             $order['status'] = "failed";
-            $order['content'] = "Sipariş oluşturulamadı.";
+            $order['content'] = $stock_control->getOriginalContent()['content'];
 
             return response()->json($order);
         }
