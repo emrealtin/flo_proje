@@ -26,7 +26,7 @@ class WareHouseController extends Controller
 
             return response()->json([
                 'code' => '100',
-                'status' => true,
+                'status' => 'success',
                 'data' => $stock_info
             ]);
 
@@ -34,22 +34,24 @@ class WareHouseController extends Controller
 
             // Depo ID belirtilmişse depoya ait toplam stoğu verir
 
-            $input_stock_info = StockInfo::where('warehouse_id',$id)
-                ->where('process_type',1)
-                ->sum('quantity');
+            $warehouse_check = WareHouse::where('id',$id)->count();
+
+            if($warehouse_check > 0){
+
+                $input_stock_info = StockInfo::where('warehouse_id',$id)
+                    ->where('process_type',1)
+                    ->sum('quantity');
 
 
-            $output_stock_info = StockInfo::where('warehouse_id',$id)
-                ->where('process_type',2)
-                ->sum('quantity');
+                $output_stock_info = StockInfo::where('warehouse_id',$id)
+                    ->where('process_type',2)
+                    ->sum('quantity');
 
-            $stock_info = ($input_stock_info-$output_stock_info);
-
-            if($stock_info){
+                $stock_info = ($input_stock_info-$output_stock_info);
 
                 return response()->json([
                     'code' => '100',
-                    'status' => true,
+                    'status' => 'success',
                     'data' => array('warehouse_id' =>  $id, 'stock' => $stock_info)
                 ]);
 
@@ -57,7 +59,7 @@ class WareHouseController extends Controller
 
                 return response()->json([
                     'code' => '104',
-                    'status' => false,
+                    'status' => 'failed',
                     'content' => 'Belirtilen depo numarası ile depo mevcut değil.'
                 ]);
 

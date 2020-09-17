@@ -9,6 +9,9 @@ class WareHouseStockListTest extends TestCase
     public function test_warehouse_stock_list()
     {
         $this->post('api/getWareHouseStock')
-            ->assertStatus(200);
+            ->assertStatus(200)
+            ->assertJson([
+                'status' => 'success',
+            ]);
     }
 }
