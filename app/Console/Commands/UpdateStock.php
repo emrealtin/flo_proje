@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Controllers\WareHouseController;
 use Illuminate\Console\Command;
 use App\WareHouse;
+use Illuminate\Support\Facades\Http;
 
 class UpdateStock extends Command
 {
@@ -39,16 +39,19 @@ class UpdateStock extends Command
      */
     public function handle()
     {
-        $warehouse = new WareHouseController();
 
-        $get_stock = $warehouse->getWareHouseStockCalc();
 
-        foreach ($get_stock as $item) {
+        $response = Http::post('http://localhost/flo_proje/public/api/getWareHouseStock');
 
-            if($item->stock) {
+        $jsonData = $response->json();
 
-                WareHouse::where('id', $item->warehouse_id)
-                    ->update(['stock' => $item->stock]);
+
+        foreach ($jsonData['data'] as $item) {
+
+            if($item['stock']) {
+
+                WareHouse::where('id', $item['warehouse_id'])
+                    ->update(['stock' => $item['stock']]);
 
             }
 
