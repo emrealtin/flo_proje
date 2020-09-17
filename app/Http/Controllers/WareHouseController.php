@@ -24,6 +24,12 @@ class WareHouseController extends Controller
 
             $stock_info = DB::select(' SELECT warehouse_id, ((select sum(quantity) as G from stock_info where process_type = 1 and warehouse_id = S.warehouse_id) - (select sum(quantity) as G from stock_info where process_type = 2 and warehouse_id = S.warehouse_id)) as stock FROM stock_info as S GROUP BY warehouse_id');
 
+            return response()->json([
+                'code' => '100',
+                'status' => true,
+                'data' => $stock_info
+            ]);
+
         }else{
 
             // Depo ID belirtilmişse depoya ait toplam stoğu verir
@@ -38,9 +44,26 @@ class WareHouseController extends Controller
                 ->sum('quantity');
 
             $stock_info = ($input_stock_info-$output_stock_info);
-        }
 
-        return $stock_info;
+            if($stock_info){
+
+                return response()->json([
+                    'code' => '100',
+                    'status' => true,
+                    'data' => array('warehouse_id' =>  $id, 'stock' => $stock_info)
+                ]);
+
+            }else{
+
+                return response()->json([
+                    'code' => '104',
+                    'status' => false,
+                    'content' => 'Belirtilen depo numarası ile depo mevcut değil.'
+                ]);
+
+            }
+
+        }
 
     }
 
